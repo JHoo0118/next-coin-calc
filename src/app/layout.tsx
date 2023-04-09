@@ -8,6 +8,7 @@ export const metadata = {
   canonical: "https://next-coin-calc.vercel.app/",
   openGraph: {
     title: "코인 평단가 계산기",
+    description: "코인 평단가를 계산해 줍니다.",
     type: "website",
     siteName: "Coin Calc",
     images: [
