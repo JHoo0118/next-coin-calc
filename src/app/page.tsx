@@ -44,7 +44,6 @@ export default function Home() {
       totalCoinCount += +coinHistory[coinName].totalCoinCount;
       totalCoinPrice += +coinHistory[coinName].totalCoinPrice;
     }
-    console.log(coinHistory, totalCoinCount, totalCoinPrice);
     const evaluation = (totalCoinPrice / totalCoinCount).toFixed(5);
     setCoinHistory((prev: CoinHistory) => {
       let resultHistory: CoinHistory = {};

@@ -13,7 +13,7 @@ export const metadata = {
     siteName: "Coin Calc",
     images: [
       {
-        url: "./images/logo.png",
+        url: "https://next-coin-calc.vercel.app/logo.png",
         width: 192,
         height: 192,
         alt: "이미지",
