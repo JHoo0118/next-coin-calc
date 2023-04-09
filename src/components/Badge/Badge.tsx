@@ -1,5 +1,4 @@
 import { TwMainColor } from "@/data/types";
-import Link from "next/link";
 import React, { FC, ReactNode } from "react";
 
 export interface BadgeProps {

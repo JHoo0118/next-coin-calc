@@ -1,5 +1,5 @@
+import twFocusClass from "@/app/utils/twFocusClass";
 import React, { ButtonHTMLAttributes } from "react";
-import twFocusClass from "@/utils/twFocusClass";
 
 export interface ButtonCircleProps
   extends ButtonHTMLAttributes<HTMLButtonElement> {
@@ -14,8 +14,8 @@ const ButtonCircle: React.FC<ButtonCircleProps> = ({
   return (
     <button
       className={
-        `ttnc-ButtonCircle flex items-center justify-center rounded-full !leading-none disabled:bg-opacity-70 bg-slate-900 hover:bg-slate-800 
-        text-slate-50 ${className} ${size} ` + twFocusClass(true)
+        `ttnc-ButtonCircle flex items-center justify-center rounded-full bg-slate-900 !leading-none text-slate-50 hover:bg-slate-800 
+        disabled:bg-opacity-70 ${className} ${size} ` + twFocusClass(true)
       }
       {...args}
     />
