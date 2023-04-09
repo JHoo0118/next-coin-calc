@@ -1,14 +1,11 @@
 import "./globals.css";
 import "@/styles/index.scss";
 import { Noto_Sans_KR } from "next/font/google";
-{
-  /* <meta name="google-site-verification" content="p8O1isECD6Uv19vpVSPBsFN8KSBaIJ55TrKK_g7fX8A" /> */
-}
+
 export const metadata = {
   title: "코인 평단가 계산기",
   description: "코인 평단가를 계산해 줍니다.",
   canonical: "https://next-coin-calc.vercel.app/",
-  googleSiteVerification: "p8O1isECD6Uv19vpVSPBsFN8KSBaIJ55TrKK_g7fX8A",
   openGraph: {
     title: "코인 평단가 계산기",
     type: "website",
