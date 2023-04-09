@@ -1,5 +1,4 @@
 import { TwMainColor } from "@/data/types";
-import { Route } from "@/routers/types";
 import Link from "next/link";
 import React, { FC, ReactNode } from "react";
 
@@ -7,14 +6,12 @@ export interface BadgeProps {
   className?: string;
   name: ReactNode;
   color?: TwMainColor;
-  href?: Route;
 }
 
 const Badge: FC<BadgeProps> = ({
   className = "relative",
   name,
   color = "blue",
-  href,
 }) => {
   const getColorClass = (hasHover = true) => {
     switch (color) {
@@ -58,16 +55,7 @@ const Badge: FC<BadgeProps> = ({
   const CLASSES =
     "nc-Badge  inline-flex px-2.5 py-1 rounded-full font-medium text-xs " +
     className;
-  return !!href ? (
-    <Link
-      href={href || "/"}
-      className={`transition-colors hover:text-white duration-300 ${CLASSES} ${getColorClass()}`}
-    >
-      {name}
-    </Link>
-  ) : (
-    <span className={`${CLASSES} ${getColorClass(false)} `}>{name}</span>
-  );
+  return <span className={`${CLASSES} ${getColorClass(false)} `}>{name}</span>;
 };
 
 export default Badge;
