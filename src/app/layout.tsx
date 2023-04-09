@@ -5,9 +5,19 @@ import { Noto_Sans_KR } from "next/font/google";
 export const metadata = {
   title: "코인 평단가 계산기",
   description: "코인 평단가를 계산해 줍니다.",
+  canonical: "https://next-coin-calc.vercel.app/",
   openGraph: {
+    title: "코인 평단가 계산기",
     type: "website",
     siteName: "Coin Calc",
+    images: [
+      {
+        url: "./images/logo.png",
+        width: 192,
+        height: 192,
+        alt: "이미지",
+      },
+    ],
   },
 };
 
