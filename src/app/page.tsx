@@ -1,124 +1,229 @@
-import Image from 'next/image'
-import { Inter } from 'next/font/google'
+"use client";
+import Badge from "@/components/Badge/Badge";
+import ButtonPrimary from "@/components/Button/ButtonPrimary";
+import ButtonSecondary from "@/components/Button/ButtonSecondary";
+import Input from "@/components/Input/Input";
+import { useEffect, useState } from "react";
+import { useForm } from "react-hook-form";
 
-const inter = Inter({ subsets: ['latin'] })
+interface CoinForm {
+  coinName: string;
+  coinCount: number;
+  coinPrice: number;
+}
 
+interface CoinHistory {
+  [x: string]: {
+    history: Pick<CoinForm, "coinCount" | "coinPrice">[];
+    totalCoinCount: number;
+    totalCoinPrice: number;
+    evaluation: string;
+  };
+}
 export default function Home() {
+  const {
+    register,
+    handleSubmit,
+    reset,
+    formState: { errors, isValid },
+  } = useForm<CoinForm>();
+
+  const [coinHistory, setCoinHistory] = useState<CoinHistory>({});
+  useEffect(() => {
+    const coinHistory = localStorage.getItem("coinHistory");
+    if (!!coinHistory) {
+      setCoinHistory(JSON.parse(coinHistory));
+    }
+  });
+
+  const onSubmit = (validForm: CoinForm) => {
+    const { coinName, coinCount, coinPrice } = validForm;
+    let totalCoinCount = +coinCount;
+    let totalCoinPrice = +totalCoinCount * coinPrice;
+    if (!!coinHistory && coinHistory.hasOwnProperty(coinName)) {
+      totalCoinCount += +coinHistory[coinName].totalCoinCount;
+      totalCoinPrice += +coinHistory[coinName].totalCoinPrice;
+    }
+    console.log(coinHistory, totalCoinCount, totalCoinPrice);
+    const evaluation = (totalCoinPrice / totalCoinCount).toFixed(5);
+    setCoinHistory((prev: CoinHistory) => {
+      let resultHistory: CoinHistory = {};
+      if (!prev.hasOwnProperty(coinName)) {
+        resultHistory[coinName] = {
+          history: [{ coinCount, coinPrice }],
+          totalCoinCount,
+          totalCoinPrice,
+          evaluation,
+        };
+      } else {
+        resultHistory[coinName] = {
+          history: [...prev[coinName].history, { coinCount, coinPrice }],
+          totalCoinCount,
+          totalCoinPrice,
+          evaluation,
+        };
+      }
+      const returnObj = {
+        ...prev,
+        ...resultHistory,
+      };
+      localStorage.setItem("coinHistory", JSON.stringify(returnObj));
+      return returnObj;
+    });
+  };
+
+  const onClickRest = () => {
+    if (localStorage.getItem("coinHistory")) {
+      localStorage.removeItem("coinHistory");
+    }
+    setCoinHistory({});
+    reset();
+  };
   return (
-    <main className="flex min-h-screen flex-col items-center justify-between p-24">
-      <div className="z-10 w-full max-w-5xl items-center justify-between font-mono text-sm lg:flex">
-        <p className="fixed left-0 top-0 flex w-full justify-center border-b border-gray-300 bg-gradient-to-b from-zinc-200 pb-6 pt-8 backdrop-blur-2xl dark:border-neutral-800 dark:bg-zinc-800/30 dark:from-inherit lg:static lg:w-auto  lg:rounded-xl lg:border lg:bg-gray-200 lg:p-4 lg:dark:bg-zinc-800/30">
-          Get started by editing&nbsp;
-          <code className="font-mono font-bold">src/app/page.tsx</code>
-        </p>
-        <div className="fixed bottom-0 left-0 flex h-48 w-full items-end justify-center bg-gradient-to-t from-white via-white dark:from-black dark:via-black lg:static lg:h-auto lg:w-auto lg:bg-none">
-          <a
-            className="pointer-events-none flex place-items-center gap-2 p-8 lg:pointer-events-auto lg:p-0"
-            href="https://vercel.com?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            By{' '}
-            <Image
-              src="/vercel.svg"
-              alt="Vercel Logo"
-              className="dark:invert"
-              width={100}
-              height={24}
-              priority
-            />
-          </a>
+    <div className="relative min-h-screen w-full">
+      <div className="absolute left-[50%] top-[50%] -translate-x-[50%] -translate-y-[50%]">
+        <div className="container space-y-3 rounded-3xl bg-white/40 px-4 py-2 shadow-lg backdrop-blur-lg backdrop-filter dark:bg-neutral-900/40 dark:shadow-2xl sm:space-y-5 sm:p-8 md:px-10 xl:py-14 ">
+          <div>
+            <h2 className="inline-block align-middle text-4xl font-semibold">
+              코인 평단가 계산기
+            </h2>
+            <div className="my-2">
+              <Badge color={"indigo"} name={"빠름"} className="mr-1" />
+              <Badge color={"green"} name={"간편"} className="mr-1" />
+            </div>
+            <form
+              className="grid grid-cols-1 gap-6"
+              onSubmit={handleSubmit(onSubmit)}
+            >
+              <label>
+                <span className="text-gray-600">매수 코인</span>
+                <Input
+                  type="text"
+                  placeholder="비트코인"
+                  {...register("coinName", {
+                    required: {
+                      value: true,
+                      message: "코인 이름을 입력해 주세요!",
+                    },
+                  })}
+                />
+                {errors.coinName && (
+                  <span className="text-xs text-red-600">
+                    {errors.coinName.message}
+                  </span>
+                )}
+              </label>
+              <label>
+                <span className="text-gray-600">매수 수량</span>
+                <Input
+                  type="number"
+                  placeholder="1"
+                  {...register("coinCount", {
+                    required: {
+                      value: true,
+                      message: "매수 수량을 입력해 주세요!",
+                    },
+                  })}
+                />
+                {errors.coinCount && (
+                  <span className="text-xs text-red-600">
+                    {errors.coinCount.message}
+                  </span>
+                )}
+              </label>
+              <label className="block">
+                <span>매수 단가 (원)</span>
+                <Input
+                  type="number"
+                  placeholder="25000000"
+                  {...register("coinPrice", {
+                    required: {
+                      value: true,
+                      message: "매수 단가를 입력해 주세요!",
+                    },
+                  })}
+                />
+                {errors.coinPrice && (
+                  <span className="text-xs text-red-600">
+                    {errors.coinPrice.message}
+                  </span>
+                )}
+              </label>
+              <ButtonPrimary
+                className={`${!isValid ? "opacity-50" : ""} rounded-lg`}
+                disabled={!isValid}
+                type="submit"
+              >
+                계산하기
+              </ButtonPrimary>
+            </form>
+          </div>
+
+          {!!coinHistory && Object.keys(coinHistory).length > 0 && (
+            <>
+              <table className="min-w-full divide-y divide-neutral-200 dark:divide-neutral-800">
+                <thead className="bg-neutral-50 dark:bg-neutral-800">
+                  <tr className="text-left text-xs font-medium uppercase tracking-wider text-neutral-500 dark:text-neutral-300">
+                    <th scope="col" className="px-6 py-3">
+                      #
+                    </th>
+                    <th scope="col" className="px-6 py-3">
+                      코인명
+                    </th>
+                    <th scope="col" className="px-6 py-3">
+                      평단가 (원)
+                    </th>
+                    <th scope="col" className="px-6 py-3">
+                      총 보유 수량
+                    </th>
+                    <th scope="col" className="px-6 py-3">
+                      총 매수 금액 (원)
+                    </th>
+                  </tr>
+                </thead>
+                <tbody className="divide-y divide-neutral-200 bg-white dark:divide-neutral-800 dark:bg-neutral-900">
+                  {Object.keys(coinHistory).map(
+                    (coinName: string, index: number) => (
+                      <tr key={index}>
+                        <td className="px-6 py-4">
+                          <h2 className="inline-flex text-sm font-semibold line-clamp-2  dark:text-neutral-300">
+                            {index + 1}
+                          </h2>
+                        </td>
+                        <td className="px-6 py-4">
+                          <h2 className="inline-flex text-sm font-semibold line-clamp-2  dark:text-neutral-300">
+                            {coinName}
+                          </h2>
+                        </td>
+                        <td className="px-6 py-4">
+                          <h2 className="inline-flex text-sm font-semibold line-clamp-2  dark:text-neutral-300">
+                            {coinHistory[coinName].evaluation}
+                          </h2>
+                        </td>
+                        <td className="px-6 py-4">
+                          <h2 className="inline-flex text-sm font-semibold line-clamp-2  dark:text-neutral-300">
+                            {coinHistory[coinName].totalCoinCount}
+                          </h2>
+                        </td>
+                        <td className="px-6 py-4">
+                          <h2 className="inline-flex text-sm font-semibold line-clamp-2  dark:text-neutral-300">
+                            {coinHistory[coinName].totalCoinPrice}
+                          </h2>
+                        </td>
+                      </tr>
+                    )
+                  )}
+                </tbody>
+              </table>
+              <div className="flex justify-end">
+                <ButtonSecondary onClick={onClickRest} className="rounded-lg">
+                  초기화
+                </ButtonSecondary>
+              </div>
+            </>
+          )}
         </div>
       </div>
-
-      <div className="relative flex place-items-center before:absolute before:h-[300px] before:w-[480px] before:-translate-x-1/2 before:rounded-full before:bg-gradient-radial before:from-white before:to-transparent before:blur-2xl before:content-[''] after:absolute after:-z-20 after:h-[180px] after:w-[240px] after:translate-x-1/3 after:bg-gradient-conic after:from-sky-200 after:via-blue-200 after:blur-2xl after:content-[''] before:dark:bg-gradient-to-br before:dark:from-transparent before:dark:to-blue-700 before:dark:opacity-10 after:dark:from-sky-900 after:dark:via-[#0141ff] after:dark:opacity-40 before:lg:h-[360px]">
-        <Image
-          className="relative dark:drop-shadow-[0_0_0.3rem_#ffffff70] dark:invert"
-          src="/next.svg"
-          alt="Next.js Logo"
-          width={180}
-          height={37}
-          priority
-        />
-      </div>
-
-      <div className="mb-32 grid text-center lg:mb-0 lg:grid-cols-4 lg:text-left">
-        <a
-          href="https://beta.nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          className="group rounded-lg border border-transparent px-5 py-4 transition-colors hover:border-gray-300 hover:bg-gray-100 hover:dark:border-neutral-700 hover:dark:bg-neutral-800/30"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <h2 className={`${inter.className} mb-3 text-2xl font-semibold`}>
-            Docs{' '}
-            <span className="inline-block transition-transform group-hover:translate-x-1 motion-reduce:transform-none">
-              -&gt;
-            </span>
-          </h2>
-          <p
-            className={`${inter.className} m-0 max-w-[30ch] text-sm opacity-50`}
-          >
-            Find in-depth information about Next.js features and API.
-          </p>
-        </a>
-
-        <a
-          href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          className="group rounded-lg border border-transparent px-5 py-4 transition-colors hover:border-gray-300 hover:bg-gray-100 hover:dark:border-neutral-700 hover:dark:bg-neutral-800 hover:dark:bg-opacity-30"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <h2 className={`${inter.className} mb-3 text-2xl font-semibold`}>
-            Learn{' '}
-            <span className="inline-block transition-transform group-hover:translate-x-1 motion-reduce:transform-none">
-              -&gt;
-            </span>
-          </h2>
-          <p
-            className={`${inter.className} m-0 max-w-[30ch] text-sm opacity-50`}
-          >
-            Learn about Next.js in an interactive course with&nbsp;quizzes!
-          </p>
-        </a>
-
-        <a
-          href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          className="group rounded-lg border border-transparent px-5 py-4 transition-colors hover:border-gray-300 hover:bg-gray-100 hover:dark:border-neutral-700 hover:dark:bg-neutral-800/30"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <h2 className={`${inter.className} mb-3 text-2xl font-semibold`}>
-            Templates{' '}
-            <span className="inline-block transition-transform group-hover:translate-x-1 motion-reduce:transform-none">
-              -&gt;
-            </span>
-          </h2>
-          <p
-            className={`${inter.className} m-0 max-w-[30ch] text-sm opacity-50`}
-          >
-            Explore the Next.js 13 playground.
-          </p>
-        </a>
-
-        <a
-          href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          className="group rounded-lg border border-transparent px-5 py-4 transition-colors hover:border-gray-300 hover:bg-gray-100 hover:dark:border-neutral-700 hover:dark:bg-neutral-800/30"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <h2 className={`${inter.className} mb-3 text-2xl font-semibold`}>
-            Deploy{' '}
-            <span className="inline-block transition-transform group-hover:translate-x-1 motion-reduce:transform-none">
-              -&gt;
-            </span>
-          </h2>
-          <p
-            className={`${inter.className} m-0 max-w-[30ch] text-sm opacity-50`}
-          >
-            Instantly deploy your Next.js site to a shareable URL with Vercel.
-          </p>
-        </a>
-      </div>
-    </main>
-  )
+    </div>
+  );
 }
