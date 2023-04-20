@@ -80,8 +80,8 @@ export default function Home() {
   };
   return (
     <div className="relative min-h-screen w-full">
-      <div className="absolute left-[50%] top-[50%] -translate-x-[50%] -translate-y-[50%]">
-        <div className="container space-y-3 rounded-3xl bg-white/40 px-4 py-2 shadow-lg backdrop-blur-lg backdrop-filter dark:bg-neutral-900/40 dark:shadow-2xl sm:space-y-5 sm:p-8 md:px-10 xl:py-14 ">
+      <div className="absolute left-[50%] top-[50%] min-w-full -translate-x-[50%] -translate-y-[50%]">
+        <div className="mx-auto w-[90%] space-y-3 rounded-3xl bg-white/40 px-4 py-2 shadow-lg backdrop-blur-lg backdrop-filter dark:bg-neutral-900/40 dark:shadow-2xl sm:space-y-5 sm:p-8 md:px-10 lg:w-[60%] xl:w-[60%]  xl:py-14 ">
           <div>
             <h2 className="inline-block align-middle text-4xl font-semibold">
               코인 평단가 계산기
@@ -160,60 +160,62 @@ export default function Home() {
 
           {!!coinHistory && Object.keys(coinHistory).length > 0 && (
             <>
-              <table className="min-w-full divide-y divide-neutral-200 dark:divide-neutral-800">
-                <thead className="bg-neutral-50 dark:bg-neutral-800">
-                  <tr className="text-left text-xs font-medium uppercase tracking-wider text-neutral-500 dark:text-neutral-300">
-                    <th scope="col" className="px-6 py-3">
-                      #
-                    </th>
-                    <th scope="col" className="px-6 py-3">
-                      코인명
-                    </th>
-                    <th scope="col" className="px-6 py-3">
-                      평단가 (원)
-                    </th>
-                    <th scope="col" className="px-6 py-3">
-                      총 보유 수량
-                    </th>
-                    <th scope="col" className="px-6 py-3">
-                      총 매수 금액 (원)
-                    </th>
-                  </tr>
-                </thead>
-                <tbody className="divide-y divide-neutral-200 bg-white dark:divide-neutral-800 dark:bg-neutral-900">
-                  {Object.keys(coinHistory).map(
-                    (coinName: string, index: number) => (
-                      <tr key={index}>
-                        <td className="px-6 py-4">
-                          <h2 className="inline-flex text-sm font-semibold line-clamp-2  dark:text-neutral-300">
-                            {index + 1}
-                          </h2>
-                        </td>
-                        <td className="px-6 py-4">
-                          <h2 className="inline-flex text-sm font-semibold line-clamp-2  dark:text-neutral-300">
-                            {coinName}
-                          </h2>
-                        </td>
-                        <td className="px-6 py-4">
-                          <h2 className="inline-flex text-sm font-semibold line-clamp-2  dark:text-neutral-300">
-                            {coinHistory[coinName].evaluation}
-                          </h2>
-                        </td>
-                        <td className="px-6 py-4">
-                          <h2 className="inline-flex text-sm font-semibold line-clamp-2  dark:text-neutral-300">
-                            {coinHistory[coinName].totalCoinCount}
-                          </h2>
-                        </td>
-                        <td className="px-6 py-4">
-                          <h2 className="inline-flex text-sm font-semibold line-clamp-2  dark:text-neutral-300">
-                            {coinHistory[coinName].totalCoinPrice}
-                          </h2>
-                        </td>
-                      </tr>
-                    )
-                  )}
-                </tbody>
-              </table>
+              <div className="overflow-x-auto">
+                <table className="min-w-full divide-y divide-neutral-200 overflow-x-auto dark:divide-neutral-800">
+                  <thead className="bg-neutral-50 dark:bg-neutral-800">
+                    <tr className="text-left text-xs font-medium uppercase tracking-wider text-neutral-500 dark:text-neutral-300">
+                      <th scope="col" className="px-6 py-3">
+                        #
+                      </th>
+                      <th scope="col" className="px-6 py-3">
+                        코인명
+                      </th>
+                      <th scope="col" className="px-6 py-3">
+                        평단가 (원)
+                      </th>
+                      <th scope="col" className="px-6 py-3">
+                        총 보유 수량
+                      </th>
+                      <th scope="col" className="px-6 py-3">
+                        총 매수 금액 (원)
+                      </th>
+                    </tr>
+                  </thead>
+                  <tbody className="divide-y divide-neutral-200 bg-white dark:divide-neutral-800 dark:bg-neutral-900">
+                    {Object.keys(coinHistory).map(
+                      (coinName: string, index: number) => (
+                        <tr key={index}>
+                          <td className="px-6 py-4">
+                            <h2 className="inline-flex text-sm font-semibold line-clamp-2  dark:text-neutral-300">
+                              {index + 1}
+                            </h2>
+                          </td>
+                          <td className="px-6 py-4">
+                            <h2 className="inline-flex text-sm font-semibold line-clamp-2  dark:text-neutral-300">
+                              {coinName}
+                            </h2>
+                          </td>
+                          <td className="px-6 py-4">
+                            <h2 className="inline-flex text-sm font-semibold line-clamp-2  dark:text-neutral-300">
+                              {coinHistory[coinName].evaluation}
+                            </h2>
+                          </td>
+                          <td className="px-6 py-4">
+                            <h2 className="inline-flex text-sm font-semibold line-clamp-2  dark:text-neutral-300">
+                              {coinHistory[coinName].totalCoinCount}
+                            </h2>
+                          </td>
+                          <td className="px-6 py-4">
+                            <h2 className="inline-flex text-sm font-semibold line-clamp-2  dark:text-neutral-300">
+                              {coinHistory[coinName].totalCoinPrice}
+                            </h2>
+                          </td>
+                        </tr>
+                      )
+                    )}
+                  </tbody>
+                </table>
+              </div>
               <div className="flex justify-end">
                 <ButtonSecondary onClick={onClickRest} className="rounded-lg">
                   초기화
